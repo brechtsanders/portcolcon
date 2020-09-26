@@ -63,7 +63,7 @@ else
 OS_LINK_FLAGS = -shared -Wl,-soname,$@ $(STRIPFLAG)
 endif
 
-UTILS_BIN = src/portconcol_test$(BINEXT)
+UTILS_BIN = src/portcolcon_test$(BINEXT)
 
 COMMON_PACKAGE_FILES = README.md LICENSE Changelog.txt
 SOURCE_PACKAGE_FILES = $(COMMON_PACKAGE_FILES) Makefile doc/Doxyfile include/*.h lib/*.c src/*.c build/*.cbp build/*.depend build/*.workspace
@@ -93,10 +93,10 @@ $(SOLIBPREFIX)portcolcon$(SOEXT): $(LIBPORTCOLCON_OBJ:%.o=%.shared.o)
 
 utils: $(UTILS_BIN)
 
-#src/portconcol_test_s$(BINEXT): %$(BINEXT): %.static.o $(LIBPREFIX)portcolcon$(LIBEXT)
+#src/portcolcon_test_s$(BINEXT): %$(BINEXT): %.static.o $(LIBPREFIX)portcolcon$(LIBEXT)
 #	$(CC) $(STRIPFLAG) -o $@ $^ $(LIBPORTCOLCON_LDFLAGS) $(LDFLAGS)
 
-src/portconcol_test$(BINEXT): %$(BINEXT): %.shared.o $(SOLIBPREFIX)portcolcon$(SOEXT)
+src/portcolcon_test$(BINEXT): %$(BINEXT): %.shared.o $(SOLIBPREFIX)portcolcon$(SOEXT)
 	$(CC) $(STRIPFLAG) -o $@ $^ $(LIBPORTCOLCON_LDFLAGS) $(LDFLAGS)
 
 .PHONY: doc
