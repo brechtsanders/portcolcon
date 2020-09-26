@@ -120,6 +120,9 @@ ifdef DOXYGEN
 	$(CPDIR) doc/man $(PREFIX)/
 endif
 
+test: src/portcolcon_test$(BINEXT)
+	LD_LIBRARY_PATH=. src/portcolcon_test
+
 .PHONY: version
 version:
 	sed -ne "s/^#define\s*PORTCOLCON_VERSION_[A-Z]*\s*\([0-9]*\)\s*$$/\1./p" include/portcolcon.h | tr -d "\n" | sed -e "s/\.$$//" > version

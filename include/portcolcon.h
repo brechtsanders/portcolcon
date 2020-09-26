@@ -190,6 +190,27 @@ DLL_EXPORT_PORTCOLCON void portcolcon_reset_color (portcolconhandle handle);
  */
 DLL_EXPORT_PORTCOLCON void portcolcon_set_title (portcolconhandle handle, const char* title);
 
+/*! \brief sets the cursor at the specified position
+ * \param  handle        portcolcon handle returned by portcolcon_initialize()
+ * \param  x             column to position the cursor at (leftmost position = 0)
+ * \param  y             row to position the cursor at (topmost position = 0)
+ * \sa     portcolcon_initialize()
+ */
+DLL_EXPORT_PORTCOLCON void portcolcon_move_cursor (portcolconhandle handle, int x, int y);
+
+/*! \brief sets the cursor at the specified position
+ * \param  handle        portcolcon handle returned by portcolcon_initialize()
+ * \param  visible       0 to hide cursor or non-zero to show cursor
+ * \sa     portcolcon_initialize()
+ */
+DLL_EXPORT_PORTCOLCON void portcolcon_show_cursor (portcolconhandle handle, int visible);
+
+/*! \brief clears the console and positions the cursor at the top left
+ * \param  handle        portcolcon handle returned by portcolcon_initialize()
+ * \sa     portcolcon_initialize()
+ */
+DLL_EXPORT_PORTCOLCON void portcolcon_clear_screen (portcolconhandle handle);
+
 /*! \brief get value of environment variable
  * \param  varname       variable name
  * \return value of environment variable or NULL if not found (caller must portcolcon_free_string() result)

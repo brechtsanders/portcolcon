@@ -176,6 +176,61 @@ DLL_EXPORT_PORTCOLCON void portcolcon_set_title (portcolconhandle handle, const 
   }
 }
 
+DLL_EXPORT_PORTCOLCON void portcolcon_move_cursor (portcolconhandle handle, int x, int y)
+{
+  if (!handle->nocolor_is_set) {
+#if defined(_WIN32) && !defined(NOWINDOWSCONSOLE)
+    if (handle->consolehandle) {
+      COORD pos = {x, y};
+      SetConsoleCursorPosition(handle->consolehandle, pos);
+    } else
+#endif
+    if (handle->term_is_set) {
+      printf("\e[%i;%iH", y + 1, x + 1);
+    }
+  }
+}
+
+DLL_EXPORT_PORTCOLCON void portcolcon_show_cursor (portcolconhandle handle, int visible)
+{
+  if (!handle->nocolor_is_set) {
+#if defined(_WIN32) && !defined(NOWINDOWSCONSOLE)
+    if (handle->consolehandle) {
+      CONSOLE_CURSOR_INFO cursorinfo;
+      GetConsoleCursorInfo(handle->consolehandle, &cursorinfo);
+      cursorinfo.bVisible = (visible ? TRUE : FALSE);
+      SetConsoleCursorInfo(handle->consolehandle, &cursorinfo);
+    } else
+#endif
+    if (handle->term_is_set) {
+      printf("\e[25%c", (visible ? 'h' : 'l'));
+    }
+  }
+}
+
+DLL_EXPORT_PORTCOLCON void portcolcon_clear_screen (portcolconhandle handle)
+{
+  if (!handle->nocolor_is_set) {
+#if defined(_WIN32) && !defined(NOWINDOWSCONSOLE)
+    if (handle->consolehandle) {
+      CONSOLE_SCREEN_BUFFER_INFO consoleinfo;
+      if (GetConsoleScreenBufferInfo(handle->consolehandle, &consoleinfo)) {
+        DWORD n;
+        COORD pos = {0, 0};
+        DWORD consolesize = consoleinfo.dwSize.X * consoleinfo.dwSize.Y;
+        FillConsoleOutputCharacterA(handle->consolehandle, ' ', consolesize, pos, &n);
+        FillConsoleOutputAttribute(handle->consolehandle, handle->windows_original_attributes, consolesize, pos, &n);
+      }
+      portcolcon_move_cursor(handle, 0, 0);
+    } else
+#endif
+    if (handle->term_is_set) {
+      printf("\e[2J");
+      portcolcon_move_cursor(handle, 0, 0);
+    }
+  }
+}
+
 DLL_EXPORT_PORTCOLCON char* portcolcon_getenv (const char* varname)
 {
   char* result;
