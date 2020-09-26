@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1601124309 source:z:\portcolcon\src\portcolcon_test.c
+	"portcolcon.h"
+	<stdlib.h>
+
+1601124400 z:\portcolcon\include\portcolcon.h
+	<stdio.h>
+
