@@ -78,10 +78,12 @@ DLL_EXPORT_PORTCOLCON portcolconhandle portcolcon_initialize ()
 DLL_EXPORT_PORTCOLCON void portcolcon_cleanup (portcolconhandle handle)
 {
   if (handle) {
+/*
     //restore initial console foreground and background color
 #if defined(_WIN32) && !defined(NOWINDOWSCONSOLE)
     SetConsoleTextAttribute(handle->consolehandle, handle->windows_original_attributes);
 #endif
+*/
     free(handle);
   }
 }

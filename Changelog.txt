@@ -1,3 +1,9 @@
+0.1.1
+
+2020-09-27  Brecht Sanders  https://github.com/brechtsanders/
+
+  * don't restore original color in portcolcon_cleanup()
+
 0.1.0
 
 2020-09-26  Brecht Sanders  https://github.com/brechtsanders/
