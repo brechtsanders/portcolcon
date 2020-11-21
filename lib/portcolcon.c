@@ -100,7 +100,7 @@ DLL_EXPORT_PORTCOLCON void portcolcon_write (portcolconhandle handle, const char
 #endif
 /**/
   {
-    printf("%s", data);
+    portcolcon_printf(handle, "%s", data);
   }
 }
 
