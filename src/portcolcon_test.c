@@ -39,4 +39,5 @@ int main()
 
   //clean up
   portcolcon_cleanup(con);
+  return 0;
 }

@@ -1,6 +1,6 @@
 /**
- * @file PORTABLECONSOLE.h
- * @brief PORTABLECONSOLE library header file with main functions
+ * @file portcolcon.h
+ * @brief portcolcon library header file with main functions
  * @author Brecht Sanders
  *
  * This header file defines the functions needed for the portableconsole library
