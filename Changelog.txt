@@ -4,6 +4,7 @@
 
   * fix line break issue when not using Windows console
   * added GitHub Actions CI
+  * don't include malloc.h (fails on macOS)
 
 0.1.2
 
