@@ -57,9 +57,9 @@ DLL_EXPORT_PORTCOLCON portcolconhandle portcolcon_initialize ()
       //remember current console foreground and background color
       handle->windows_original_attributes = consoleinfo.wAttributes;
       handle->windows_current_attributes = consoleinfo.wAttributes;
-      return handle;
+    } else {
+      handle->consolehandle = NULL;
     }
-    handle->consolehandle = NULL;
   }
 #endif
   if ((s = portcolcon_getenv("TERM")) != NULL) {
@@ -100,7 +100,8 @@ DLL_EXPORT_PORTCOLCON void portcolcon_write (portcolconhandle handle, const char
 #endif
 /**/
   {
-    portcolcon_printf(handle, "%s", data);
+    //portcolcon_printf(handle, "%s", data);
+    puts(data);
   }
 }
 
