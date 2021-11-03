@@ -34,7 +34,7 @@
 /*! \brief minor version number */
 #define PORTCOLCON_VERSION_MINOR 1
 /*! \brief micro version number */
-#define PORTCOLCON_VERSION_MICRO 2
+#define PORTCOLCON_VERSION_MICRO 3
 /*! @} */
 
 /*! \brief packed version number */
