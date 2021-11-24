@@ -1,3 +1,13 @@
+0.1.5
+
+2021-11-24  Brecht Sanders  https://github.com/brechtsanders/
+
+  * moved version functions and definitions to the end of portcolcon.h
+  * changed portcolcon_printf() from macro to function
+  * added portcolcon_printf_in_color()
+  * changed portcolcon_write_data_in_color() from function to macro
+  * on Windows use printf() in portcolcon_write() instead of WriteConsoleA()
+
 0.1.4
 
 2021-11-24  Brecht Sanders  https://github.com/brechtsanders/

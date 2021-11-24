@@ -10,6 +10,7 @@
 #define INCLUDED_PORTCOLCON_H
 
 #include <stdio.h>
+#include <stdarg.h>
 
 /*! \cond PRIVATE */
 #if !defined(DLL_EXPORT_PORTCOLCON)
@@ -22,31 +23,6 @@
 # endif
 #endif
 /*! \endcond */
-
-/*! \brief version number constants
- * \sa     portcolcon_get_version()
- * \sa     portcolcon_get_version_string()
- * \name   PORTCOLCON_VERSION_*
- * \{
- */
-/*! \brief major version number */
-#define PORTCOLCON_VERSION_MAJOR 0
-/*! \brief minor version number */
-#define PORTCOLCON_VERSION_MINOR 1
-/*! \brief micro version number */
-#define PORTCOLCON_VERSION_MICRO 4
-/*! @} */
-
-/*! \brief packed version number */
-#define PORTCOLCON_VERSION (PORTCOLCON_VERSION_MAJOR * 0x01000000 + PORTCOLCON_VERSION_MINOR * 0x00010000 + PORTCOLCON_VERSION_MICRO * 0x00000100)
-
-/*! \cond PRIVATE */
-#define PORTCOLCON_VERSION_STRINGIZE_(major, minor, micro) #major"."#minor"."#micro
-#define PORTCOLCON_VERSION_STRINGIZE(major, minor, micro) PORTCOLCON_VERSION_STRINGIZE_(major, minor, micro)
-/*! \endcond */
-
-/*! \brief string with dotted version number \hideinitializer */
-#define PORTCOLCON_VERSION_STRING PORTCOLCON_VERSION_STRINGIZE(PORTCOLCON_VERSION_MAJOR, PORTCOLCON_VERSION_MINOR, PORTCOLCON_VERSION_MICRO)
 
 
 
@@ -97,20 +73,6 @@ extern "C" {
  */
 typedef struct portcolcon_struct* portcolconhandle;
 
-/*! \brief get portcolcon library version string
- * \param  pmajor        pointer to integer that will receive major version number
- * \param  pminor        pointer to integer that will receive minor version number
- * \param  pmicro        pointer to integer that will receive micro version number
- * \sa     portcolcon_get_version_string()
- */
-DLL_EXPORT_PORTCOLCON void portcolcon_get_version (int* pmajor, int* pminor, int* pmicro);
-
-/*! \brief get portcolcon library version string
- * \return version string
- * \sa     portcolcon_get_version()
- */
-DLL_EXPORT_PORTCOLCON const char* portcolcon_get_version_string ();
-
 /*! \brief initialize portcolcon library
  * \return handle for use with other portcolcon functions, when done destroy with portcolcon_cleanup()
  * \sa     portcolcon_cleanup()
@@ -130,50 +92,6 @@ DLL_EXPORT_PORTCOLCON portcolconhandle portcolcon_initialize ();
  * \sa     portcolcon_initialize()
  */
 DLL_EXPORT_PORTCOLCON void portcolcon_cleanup (portcolconhandle handle);
-
-/*! \brief display text on the console
- * \param  handle        portcolcon handle returned by portcolcon_initialize()
- * \param  data          text to display in console
- * \sa     portcolcon_initialize()
- */
-DLL_EXPORT_PORTCOLCON void portcolcon_write (portcolconhandle handle, const char* data);
-
-/*! \brief display data on the console in the specified colors
- * \param  handle            portcolcon handle returned by portcolcon_initialize()
- * \param  data              text to display in console
- * \param  datalen           length of text to display in console
- * \param  foreground_color  foreground color for highlighted text
- * \param  background_color  background color for highlighted text
- * \sa     portcolcon_initialize()
- */
-DLL_EXPORT_PORTCOLCON void portcolcon_write_data_in_color (portcolconhandle handle, const char* data, int datalen, unsigned char foreground_color, unsigned char background_color);
-
-/*! \brief display text on the console in the specified colors
- * \param  handle            portcolcon handle returned by portcolcon_initialize()
- * \param  data              text to display in console
- * \param  foreground_color  foreground color for highlighted text
- * \param  background_color  background color for highlighted text
- * \sa     portcolcon_initialize()
- */
-#define portcolcon_write_in_color(handle,data,foreground_color,background_color) portcolcon_write_data_in_color(handle, data, strlen(data), foreground_color, background_color)
-
-/*! \brief display text on the console highlighting all occurrences of \a searchtext
- * \param  handle            portcolcon handle returned by portcolcon_initialize()
- * \param  data              text to display in console
- * \param  searchtext        text to highlight
- * \param  casesensitive     non-zero for case-sensitive match or zero for case-insensitive match
- * \param  foreground_color  foreground color for highlighted text
- * \param  background_color  background color for highlighted text
- * \sa     portcolcon_initialize()
- */
-DLL_EXPORT_PORTCOLCON void portcolcon_write_highlight (portcolconhandle handle, const char* data, const char* searchtext, int casesensitive, unsigned char foreground_color, unsigned char background_color);
-
-/*! \brief display text on the console
- * \param  handle        portcolcon handle returned by portcolcon_initialize()
- * \param  ...           arguments as used with printf()
- * \sa     portcolcon_initialize()
- */
-#define portcolcon_printf(handle, ...) printf(__VA_ARGS__)
 
 /*! \brief set the console foreground and background color
  * \param  handle            portcolcon handle returned by portcolcon_initialize()
@@ -213,6 +131,63 @@ DLL_EXPORT_PORTCOLCON void portcolcon_set_background (portcolconhandle handle, u
  * \sa     portcolcon_set_background()
  */
 DLL_EXPORT_PORTCOLCON void portcolcon_reset_color (portcolconhandle handle);
+
+/*! \brief display text on the console
+ * \param  handle        portcolcon handle returned by portcolcon_initialize()
+ * \param  data          text to display in console
+ * \sa     portcolcon_initialize()
+ */
+DLL_EXPORT_PORTCOLCON void portcolcon_write (portcolconhandle handle, const char* data);
+
+/*! \brief display data on the console in the specified colors
+ * \param  handle            portcolcon handle returned by portcolcon_initialize()
+ * \param  data              text to display in console
+ * \param  datalen           length of text to display in console
+ * \param  foreground_color  foreground color for highlighted text
+ * \param  background_color  background color for highlighted text
+ * \sa     portcolcon_initialize()
+ */
+//DLL_EXPORT_PORTCOLCON void portcolcon_write_data_in_color (portcolconhandle handle, const char* data, int datalen, unsigned char foreground_color, unsigned char background_color);
+#define portcolcon_write_data_in_color(handle,data,datalen,foreground_color,background_color) portcolcon_printf_in_color(handle, foreground_color, background_color, "%.*s", data, datalen)
+
+/*! \brief display text on the console in the specified colors
+ * \param  handle            portcolcon handle returned by portcolcon_initialize()
+ * \param  data              text to display in console
+ * \param  foreground_color  foreground color for highlighted text
+ * \param  background_color  background color for highlighted text
+ * \sa     portcolcon_initialize()
+ */
+//#define portcolcon_write_in_color(handle,data,foreground_color,background_color) portcolcon_write_data_in_color(handle, data, strlen(data), foreground_color, background_color)
+#define portcolcon_write_in_color(handle,data,foreground_color,background_color) portcolcon_printf_in_color(handle, foreground_color, background_color, "%s", data)
+
+/*! \brief display text on the console highlighting all occurrences of \a searchtext
+ * \param  handle            portcolcon handle returned by portcolcon_initialize()
+ * \param  data              text to display in console
+ * \param  searchtext        text to highlight
+ * \param  casesensitive     non-zero for case-sensitive match or zero for case-insensitive match
+ * \param  foreground_color  foreground color for highlighted text
+ * \param  background_color  background color for highlighted text
+ * \sa     portcolcon_initialize()
+ */
+DLL_EXPORT_PORTCOLCON void portcolcon_write_highlight (portcolconhandle handle, const char* data, const char* searchtext, int casesensitive, unsigned char foreground_color, unsigned char background_color);
+
+/*! \brief display text on the console
+ * \param  handle        portcolcon handle returned by portcolcon_initialize()
+ * \param  format        format argument as used with printf()
+ * \param  ...           remaining arguments as used with printf()
+ * \sa     portcolcon_initialize()
+ */
+DLL_EXPORT_PORTCOLCON int portcolcon_printf (portcolconhandle handle, const char* format, ...);
+
+/*! \brief display text on the console in the specified colors
+ * \param  handle        portcolcon handle returned by portcolcon_initialize()
+ * \param  foreground_color  foreground color for highlighted text
+ * \param  background_color  background color for highlighted text
+ * \param  format        format argument as used with printf()
+ * \param  ...           remaining arguments as used with printf()
+ * \sa     portcolcon_initialize()
+ */
+DLL_EXPORT_PORTCOLCON int portcolcon_printf_in_color (portcolconhandle handle, unsigned char foreground_color, unsigned char background_color, const char* format, ...);
 
 /*! \brief set the console foreground and background color
  * \param  handle        portcolcon handle returned by portcolcon_initialize()
@@ -265,8 +240,49 @@ DLL_EXPORT_PORTCOLCON char* portcolcon_getcurdir ();
  */
 DLL_EXPORT_PORTCOLCON void portcolcon_free_string (char* data);
 
+/*! \brief get portcolcon library version string
+ * \param  pmajor        pointer to integer that will receive major version number
+ * \param  pminor        pointer to integer that will receive minor version number
+ * \param  pmicro        pointer to integer that will receive micro version number
+ * \sa     portcolcon_get_version_string()
+ */
+DLL_EXPORT_PORTCOLCON void portcolcon_get_version (int* pmajor, int* pminor, int* pmicro);
+
+/*! \brief get portcolcon library version string
+ * \return version string
+ * \sa     portcolcon_get_version()
+ */
+DLL_EXPORT_PORTCOLCON const char* portcolcon_get_version_string ();
+
 #ifdef __cplusplus
 }
 #endif
+
+
+
+/*! \brief version number constants
+ * \sa     portcolcon_get_version()
+ * \sa     portcolcon_get_version_string()
+ * \name   PORTCOLCON_VERSION_*
+ * \{
+ */
+/*! \brief major version number */
+#define PORTCOLCON_VERSION_MAJOR 0
+/*! \brief minor version number */
+#define PORTCOLCON_VERSION_MINOR 1
+/*! \brief micro version number */
+#define PORTCOLCON_VERSION_MICRO 5
+/*! @} */
+
+/*! \brief packed version number */
+#define PORTCOLCON_VERSION (PORTCOLCON_VERSION_MAJOR * 0x01000000 + PORTCOLCON_VERSION_MINOR * 0x00010000 + PORTCOLCON_VERSION_MICRO * 0x00000100)
+
+/*! \cond PRIVATE */
+#define PORTCOLCON_VERSION_STRINGIZE_(major, minor, micro) #major"."#minor"."#micro
+#define PORTCOLCON_VERSION_STRINGIZE(major, minor, micro) PORTCOLCON_VERSION_STRINGIZE_(major, minor, micro)
+/*! \endcond */
+
+/*! \brief string with dotted version number \hideinitializer */
+#define PORTCOLCON_VERSION_STRING PORTCOLCON_VERSION_STRINGIZE(PORTCOLCON_VERSION_MAJOR, PORTCOLCON_VERSION_MINOR, PORTCOLCON_VERSION_MICRO)
 
 #endif

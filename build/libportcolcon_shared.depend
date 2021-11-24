@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1637756131 source:z:\portcolcon\lib\portcolcon.c
+1637782026 source:z:\portcolcon\lib\portcolcon.c
 	"portcolcon.h"
 	<stdio.h>
 	<stdlib.h>
@@ -8,6 +8,7 @@
 	<limits.h>
 	<unistd.h>
 
-1637756252 z:\portcolcon\include\portcolcon.h
+1637782100 z:\portcolcon\include\portcolcon.h
 	<stdio.h>
+	<stdarg.h>
 
