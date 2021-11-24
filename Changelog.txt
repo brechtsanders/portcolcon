@@ -1,9 +1,17 @@
+0.1.4
+
+2021-11-24  Brecht Sanders  https://github.com/brechtsanders/
+
+  * added portcolcon_write_data_in_color() and portcolcon_write_in_color()
+  * added code to keep track of current color
+  * added PORTCOLCON_COLOR_IGNORE
+
 0.1.3
 
 2021-11-03  Brecht Sanders  https://github.com/brechtsanders/
 
   * fix line break issue when not using Windows console
-  * added GitHub Actions CI
+  * added GitHub Actions CI (for: Windows/MinGW, Ubuntu/GCC, macOS/Clang)
   * don't include malloc.h (fails on macOS)
 
 0.1.2

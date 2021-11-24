@@ -12,6 +12,11 @@ int main()
   //show text
   portcolcon_printf(con, "portcolcon v%s\n", portcolcon_get_version_string());
 
+  //show text with highlighted search text
+  portcolcon_set_color(con, PORTCOLCON_COLOR_WHITE, PORTCOLCON_COLOR_BLUE);
+  portcolcon_write_highlight(con, "This a a text with highlighted search text.\n", "text", 0, PORTCOLCON_COLOR_YELLOW, PORTCOLCON_COLOR_RED);
+  portcolcon_reset_color(con);
+
   //wait for key while the cursor is hidden
   portcolcon_write(con, "Press Enter key to continue...");
   portcolcon_show_cursor(con, 0);

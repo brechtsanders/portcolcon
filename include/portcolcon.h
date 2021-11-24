@@ -34,7 +34,7 @@
 /*! \brief minor version number */
 #define PORTCOLCON_VERSION_MINOR 1
 /*! \brief micro version number */
-#define PORTCOLCON_VERSION_MICRO 3
+#define PORTCOLCON_VERSION_MICRO 4
 /*! @} */
 
 /*! \brief packed version number */
@@ -81,6 +81,7 @@ extern "C" {
 #define PORTCOLCON_COLOR_BRIGHT_YELLOW      PORTCOLCON_COLOR_YELLOW
 #define PORTCOLCON_COLOR_DARK_YELLOW        PORTCOLCON_COLOR_BROWN
 #define PORTCOLCON_COLOR_BRIGHT_WHITE       PORTCOLCON_COLOR_WHITE
+#define PORTCOLCON_COLOR_IGNORE             0xFF
 /*! @} */
 
 /*! \brief handle type used by portcolcon library
@@ -136,6 +137,36 @@ DLL_EXPORT_PORTCOLCON void portcolcon_cleanup (portcolconhandle handle);
  * \sa     portcolcon_initialize()
  */
 DLL_EXPORT_PORTCOLCON void portcolcon_write (portcolconhandle handle, const char* data);
+
+/*! \brief display data on the console in the specified colors
+ * \param  handle            portcolcon handle returned by portcolcon_initialize()
+ * \param  data              text to display in console
+ * \param  datalen           length of text to display in console
+ * \param  foreground_color  foreground color for highlighted text
+ * \param  background_color  background color for highlighted text
+ * \sa     portcolcon_initialize()
+ */
+DLL_EXPORT_PORTCOLCON void portcolcon_write_data_in_color (portcolconhandle handle, const char* data, int datalen, unsigned char foreground_color, unsigned char background_color);
+
+/*! \brief display text on the console in the specified colors
+ * \param  handle            portcolcon handle returned by portcolcon_initialize()
+ * \param  data              text to display in console
+ * \param  foreground_color  foreground color for highlighted text
+ * \param  background_color  background color for highlighted text
+ * \sa     portcolcon_initialize()
+ */
+#define portcolcon_write_in_color(handle,data,foreground_color,background_color) portcolcon_write_data_in_color(handle, data, strlen(data), foreground_color, background_color)
+
+/*! \brief display text on the console highlighting all occurrences of \a searchtext
+ * \param  handle            portcolcon handle returned by portcolcon_initialize()
+ * \param  data              text to display in console
+ * \param  searchtext        text to highlight
+ * \param  casesensitive     non-zero for case-sensitive match or zero for case-insensitive match
+ * \param  foreground_color  foreground color for highlighted text
+ * \param  background_color  background color for highlighted text
+ * \sa     portcolcon_initialize()
+ */
+DLL_EXPORT_PORTCOLCON void portcolcon_write_highlight (portcolconhandle handle, const char* data, const char* searchtext, int casesensitive, unsigned char foreground_color, unsigned char background_color);
 
 /*! \brief display text on the console
  * \param  handle        portcolcon handle returned by portcolcon_initialize()
