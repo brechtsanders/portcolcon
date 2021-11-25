@@ -171,6 +171,17 @@ DLL_EXPORT_PORTCOLCON void portcolcon_write (portcolconhandle handle, const char
  */
 DLL_EXPORT_PORTCOLCON void portcolcon_write_highlight (portcolconhandle handle, const char* data, const char* searchtext, int casesensitive, unsigned char foreground_color, unsigned char background_color);
 
+/*! \brief display text on the console highlighting all occurrences of \a searchtext
+ * \param  handle            portcolcon handle returned by portcolcon_initialize()
+ * \param  data              text to display in console
+ * \param  searchtexts       NULL terminated array of texts to highlight
+ * \param  casesensitive     non-zero for case-sensitive match or zero for case-insensitive match
+ * \param  foreground_color  foreground color for highlighted text
+ * \param  background_color  background color for highlighted text
+ * \sa     portcolcon_initialize()
+ */
+DLL_EXPORT_PORTCOLCON void portcolcon_write_multiple_highlights (portcolconhandle handle, const char* data, const char* searchtexts[], int casesensitive, unsigned char foreground_color, unsigned char background_color);
+
 /*! \brief display text on the console
  * \param  handle        portcolcon handle returned by portcolcon_initialize()
  * \param  format        format argument as used with printf()

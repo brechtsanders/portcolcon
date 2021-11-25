@@ -190,18 +190,77 @@ DLL_EXPORT_PORTCOLCON void portcolcon_write_highlight (portcolconhandle handle, 
   if (handle->nocolor_is_set || !searchtext || !*searchtext) {
     portcolcon_write(handle, data);
   } else {
-    const char* lastpos;
     const char* pos;
+    const char* lastpos = data;
     char* (*selected_strstr)(const char *, const char *) = (casesensitive ? strstr : strcasestr);
     int searchtextlen = strlen(searchtext);
-    lastpos = data;
     while ((pos = (selected_strstr)(lastpos, searchtext)) != NULL) {
       portcolcon_printf(handle, "%.*s", (int)(pos - lastpos), lastpos);
       portcolcon_printf_in_color(handle, foreground_color, background_color, "%.*s", searchtextlen, pos);
       lastpos = pos + searchtextlen;
     }
-    //print remaining text
     portcolcon_printf(handle, "%s", lastpos);
+  }
+}
+
+DLL_EXPORT_PORTCOLCON void portcolcon_write_multiple_highlights (portcolconhandle handle, const char* data, const char* searchtexts[], int casesensitive, unsigned char foreground_color, unsigned char background_color)
+{
+  if (!data || !*data)
+    return;
+  if (handle->nocolor_is_set || !searchtexts || !searchtexts[0]) {
+    portcolcon_write(handle, data);
+  } else {
+    size_t i;
+    struct {
+      int searchtextlen;
+      const char* pos;
+    } *searchtextstatus;
+    size_t earliestindex;
+    const char* lastpos = data;
+    size_t searchtextscount = 0;
+    char* (*selected_strstr)(const char *, const char *) = (casesensitive ? strstr : strcasestr);
+    //count number of search texts
+    searchtextscount = 0;
+    while (searchtexts[searchtextscount])
+      searchtextscount++;
+    searchtextstatus = malloc(searchtextscount * sizeof(*searchtextstatus));
+    //find earliest match
+    earliestindex = searchtextscount;
+    for (i = 0; i < searchtextscount; i++) {
+      searchtextstatus[i].searchtextlen = strlen(searchtexts[i]);
+      searchtextstatus[i].pos = (selected_strstr)(lastpos, searchtexts[i]);
+      if (searchtextstatus[i].pos && (earliestindex >= searchtextscount || searchtextstatus[i].pos <= searchtextstatus[earliestindex].pos)) {
+        if (earliestindex < searchtextscount && searchtextstatus[i].pos == searchtextstatus[earliestindex].pos && searchtextstatus[i].searchtextlen < searchtextstatus[earliestindex].searchtextlen) {
+          //if multiple matches skip shortest one
+          searchtextstatus[i].pos = (selected_strstr)(lastpos + 1, searchtexts[i]);
+        } else {
+          earliestindex = i;
+        }
+      }
+    }
+    //loop while match found
+    while (earliestindex < searchtextscount) {
+      portcolcon_printf(handle, "%.*s", (int)(searchtextstatus[earliestindex].pos - lastpos), lastpos);
+      portcolcon_printf_in_color(handle, foreground_color, background_color, "%.*s", searchtextstatus[earliestindex].searchtextlen, searchtextstatus[earliestindex].pos);
+      lastpos = searchtextstatus[earliestindex].pos + searchtextstatus[earliestindex].searchtextlen;
+      searchtextstatus[earliestindex].pos = (selected_strstr)(lastpos, searchtexts[earliestindex]);
+      //find earliest match
+      earliestindex = searchtextscount;
+      for (i = 0; i < searchtextscount; i++) {
+        if (searchtextstatus[i].pos <= lastpos)
+          searchtextstatus[i].pos = (selected_strstr)(lastpos, searchtexts[i]);
+        if (searchtextstatus[i].pos && (earliestindex >= searchtextscount || searchtextstatus[i].pos <= searchtextstatus[earliestindex].pos)) {
+          if (earliestindex < searchtextscount && searchtextstatus[i].pos == searchtextstatus[earliestindex].pos && searchtextstatus[i].searchtextlen < searchtextstatus[earliestindex].searchtextlen) {
+            //if multiple matches skip shortest one
+            searchtextstatus[i].pos = (selected_strstr)(lastpos + 1, searchtexts[i]);
+          } else {
+            earliestindex = i;
+          }
+        }
+      }
+    }
+    portcolcon_printf(handle, "%s", lastpos);
+    free(searchtextstatus);
   }
 }
 

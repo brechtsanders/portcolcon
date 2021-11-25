@@ -14,7 +14,9 @@ int main()
 
   //show text with highlighted search text
   portcolcon_set_color(con, PORTCOLCON_COLOR_WHITE, PORTCOLCON_COLOR_BLUE);
-  portcolcon_write_highlight(con, "This a a text with highlighted search text.\n", "Text", 0, PORTCOLCON_COLOR_YELLOW, PORTCOLCON_COLOR_RED);
+  portcolcon_write_highlight(con, "This a a text with highlighted search text.\n", "TEXT", 0, PORTCOLCON_COLOR_YELLOW, PORTCOLCON_COLOR_RED);
+  portcolcon_set_color(con, PORTCOLCON_COLOR_WHITE, PORTCOLCON_COLOR_GREEN);
+  portcolcon_write_multiple_highlights(con, "Some more text in which multiple search texts are being searched and highlighted.\n", (const char*[]){"TEXT", "search", "searched", "in", NULL}, 0, PORTCOLCON_COLOR_BRIGHT_MAGENTA, PORTCOLCON_COLOR_BROWN);
   portcolcon_reset_color(con);
 
   //wait for key while the cursor is hidden
@@ -40,7 +42,7 @@ int main()
 
   //set the cursor
   portcolcon_move_cursor(con, 2, 20);
-  portcolcon_write(con, "<-- Position [2,20]");
+  portcolcon_write(con, "X <-- Position [2,20]\n");
 
   //clean up
   portcolcon_cleanup(con);

@@ -3,6 +3,7 @@
 2021-11-25  Brecht Sanders  https://github.com/brechtsanders/
 
   * fix case insensitive match in portcolcon_write_highlight()
+  * added portcolcon_write_multiple_highlights()
 
 0.1.5
 
