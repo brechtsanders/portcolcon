@@ -1,7 +1,7 @@
+#define _GNU_SOURCE     //needed for strcasestr()
 #include "portcolcon.h"
 #include <stdio.h>
 #include <stdlib.h>
-#define _GNU_SOURCE     //needed for strcasestr()
 #include <string.h>
 #include <ctype.h>
 #ifdef _WIN32
