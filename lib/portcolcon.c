@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -29,6 +30,22 @@ struct portcolcon_struct {
   int nocolor_is_set;
   int term_is_set;
 };
+
+#ifdef _WIN32
+static char* strcasestr (const char* haystack, const char* needle)
+{
+  size_t needlelen;
+  if (!needle || !*needle)
+      return (char*)haystack;
+  needlelen = strlen(needle);
+  while (*haystack) {
+    if (_strnicmp(haystack, needle, needlelen) == 0)
+      return (char*)haystack;
+    haystack++;
+  }
+  return NULL;
+}
+#endif
 
 DLL_EXPORT_PORTCOLCON portcolconhandle portcolcon_initialize ()
 {
@@ -175,9 +192,10 @@ DLL_EXPORT_PORTCOLCON void portcolcon_write_highlight (portcolconhandle handle, 
   } else {
     const char* lastpos;
     const char* pos;
+    char* (*selected_strstr)(const char *, const char *) = (casesensitive ? strstr : strcasestr);
     int searchtextlen = strlen(searchtext);
     lastpos = data;
-    while ((pos = strstr(lastpos, searchtext)) != NULL) {
+    while ((pos = (selected_strstr)(lastpos, searchtext)) != NULL) {
       portcolcon_printf(handle, "%.*s", (int)(pos - lastpos), lastpos);
       portcolcon_printf_in_color(handle, foreground_color, background_color, "%.*s", searchtextlen, pos);
       lastpos = pos + searchtextlen;

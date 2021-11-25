@@ -14,7 +14,7 @@ int main()
 
   //show text with highlighted search text
   portcolcon_set_color(con, PORTCOLCON_COLOR_WHITE, PORTCOLCON_COLOR_BLUE);
-  portcolcon_write_highlight(con, "This a a text with highlighted search text.\n", "text", 0, PORTCOLCON_COLOR_YELLOW, PORTCOLCON_COLOR_RED);
+  portcolcon_write_highlight(con, "This a a text with highlighted search text.\n", "Text", 0, PORTCOLCON_COLOR_YELLOW, PORTCOLCON_COLOR_RED);
   portcolcon_reset_color(con);
 
   //wait for key while the cursor is hidden

@@ -271,7 +271,7 @@ DLL_EXPORT_PORTCOLCON const char* portcolcon_get_version_string ();
 /*! \brief minor version number */
 #define PORTCOLCON_VERSION_MINOR 1
 /*! \brief micro version number */
-#define PORTCOLCON_VERSION_MICRO 5
+#define PORTCOLCON_VERSION_MICRO 6
 /*! @} */
 
 /*! \brief packed version number */
