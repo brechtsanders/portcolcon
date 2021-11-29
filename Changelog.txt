@@ -1,3 +1,9 @@
+0.1.7
+
+2021-11-29  Brecht Sanders  https://github.com/brechtsanders/
+
+  * added portcolcon_get_size()
+
 0.1.6
 
 2021-11-25  Brecht Sanders  https://github.com/brechtsanders/

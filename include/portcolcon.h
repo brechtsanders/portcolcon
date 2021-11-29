@@ -207,6 +207,15 @@ DLL_EXPORT_PORTCOLCON int portcolcon_printf_in_color (portcolconhandle handle, u
  */
 DLL_EXPORT_PORTCOLCON void portcolcon_set_title (portcolconhandle handle, const char* title);
 
+/*! \brief get the with and height of the console
+ * \param  handle        portcolcon handle returned by portcolcon_initialize()
+ * \param  width         pointer to width, on success the value pointed to will be set to the number of columns
+ * \param  height        pointer to height, on success the value pointed to will be set to the number of rows
+ * \return zero on success, non-zero on error
+ * \sa     portcolcon_move_cursor()
+ */
+DLL_EXPORT_PORTCOLCON int portcolcon_get_size (portcolconhandle handle, int* width, int* height);
+
 /*! \brief sets the cursor at the specified position
  * \param  handle        portcolcon handle returned by portcolcon_initialize()
  * \param  x             column to position the cursor at (leftmost position = 0)
@@ -282,7 +291,7 @@ DLL_EXPORT_PORTCOLCON const char* portcolcon_get_version_string ();
 /*! \brief minor version number */
 #define PORTCOLCON_VERSION_MINOR 1
 /*! \brief micro version number */
-#define PORTCOLCON_VERSION_MICRO 6
+#define PORTCOLCON_VERSION_MICRO 7
 /*! @} */
 
 /*! \brief packed version number */

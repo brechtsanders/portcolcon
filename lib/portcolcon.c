@@ -9,6 +9,7 @@
 #else
 #include <limits.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
 #endif
 
 #if defined(_WIN32) && !defined(NOWINDOWSCONSOLE)
@@ -316,6 +317,34 @@ DLL_EXPORT_PORTCOLCON void portcolcon_set_title (portcolconhandle handle, const 
       printf("\e]0;%s\a", (title ? title : ""));
     }
   }
+}
+
+DLL_EXPORT_PORTCOLCON int portcolcon_get_size (portcolconhandle handle, int* width, int* height)
+{
+  if (!handle->nocolor_is_set) {
+#ifdef _WIN32
+    if (handle->consolehandle) {
+      CONSOLE_SCREEN_BUFFER_INFO info;
+      if (GetConsoleScreenBufferInfo(handle->consolehandle, &info)) {
+        if (width)
+          *width = info.srWindow.Right - info.srWindow.Left + 1;
+        if (height)
+          *height = info.srWindow.Bottom - info.srWindow.Top + 1;
+        return 0;
+      }
+    }
+#else
+    struct winsize info;
+    if (ioctl(0, TIOCGWINSZ, &info) != -1) {
+      if (width)
+        *width = info.ws_col;
+      if (height)
+        *height = info.ws_row;
+      return 0;
+    }
+#endif
+  }
+  return -1;
 }
 
 DLL_EXPORT_PORTCOLCON void portcolcon_move_cursor (portcolconhandle handle, int x, int y)
