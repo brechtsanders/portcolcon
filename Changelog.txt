@@ -1,3 +1,9 @@
+0.1.8
+
+2021-12-02  Brecht Sanders  https://github.com/brechtsanders/
+
+  * added isatty() detection to portcolcon_initialize()
+
 0.1.7
 
 2021-11-29  Brecht Sanders  https://github.com/brechtsanders/

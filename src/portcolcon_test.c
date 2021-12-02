@@ -22,10 +22,12 @@ int main()
   {
     int n;
     portcolcon_set_color(con, PORTCOLCON_COLOR_BLACK, PORTCOLCON_COLOR_WHITE);
+    portcolcon_move_cursor(con, 0, j - 1);
     for (n = 0; n < i; n++) {
-      portcolcon_move_cursor(con, n, j - 1);
       portcolcon_write(con, "+");
-      portcolcon_move_cursor(con, n, 0);
+    }
+    portcolcon_move_cursor(con, 0, 0);
+    for (n = 0; n < i; n++) {
       portcolcon_write(con, "+");
     }
     for (n = 1; n < j - 1; n++) {

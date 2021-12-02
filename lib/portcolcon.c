@@ -5,6 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 #ifdef _WIN32
+#include <io.h>
 #include <windows.h>
 #else
 #include <limits.h>
@@ -74,14 +75,20 @@ DLL_EXPORT_PORTCOLCON portcolconhandle portcolcon_initialize ()
 #endif
   handle->ansi_current_fgcolor = CONSOLE_COLORS_TO_ANSI_FOREGROUND(PORTCOLCON_COLOR_GRAY);
   handle->ansi_current_bgcolor = CONSOLE_COLORS_TO_ANSI_BACKGROUND(PORTCOLCON_COLOR_BLACK);
-  if ((s = portcolcon_getenv("NO_COLOR")) != NULL) {
-    if (*s)
-      handle->nocolor_is_set = 1;
-    free(s);
-  } else if ((s = portcolcon_getenv("TERM")) != NULL) {
-    if (*s)
-      handle->term_is_set = 1;
-    free(s);
+#ifdef _WIN32
+  if (_isatty(_fileno(stdout))) {
+#else
+  if (isatty(fileno(stdout))) {
+#endif
+    if ((s = portcolcon_getenv("NO_COLOR")) != NULL) {
+      if (*s)
+        handle->nocolor_is_set = 1;
+      free(s);
+    } else if ((s = portcolcon_getenv("TERM")) != NULL) {
+      if (*s)
+        handle->term_is_set = 1;
+      free(s);
+    }
   }
   return handle;
 }
