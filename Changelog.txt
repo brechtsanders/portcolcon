@@ -1,3 +1,9 @@
+0.1.9
+
+2021-12-02  Brecht Sanders  https://github.com/brechtsanders/
+
+  * added support for FORCE_ANSI environment variable to force VT/ANSI output
+
 0.1.8
 
 2021-12-02  Brecht Sanders  https://github.com/brechtsanders/

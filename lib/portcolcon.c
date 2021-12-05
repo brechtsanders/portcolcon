@@ -56,38 +56,50 @@ DLL_EXPORT_PORTCOLCON portcolconhandle portcolcon_initialize ()
   char* s;
   if ((handle = (struct portcolcon_struct*)malloc(sizeof(struct portcolcon_struct))) == NULL)
     return NULL;
-  handle->nocolor_is_set = 0;
-  handle->term_is_set = 0;
-#if defined(_WIN32) && !defined(NOWINDOWSCONSOLE)
-  CONSOLE_SCREEN_BUFFER_INFO consoleinfo;
-  //get console handle and current console foreground and background color
-  handle->consolehandle = GetStdHandle(STD_OUTPUT_HANDLE);
-  handle->windows_original_attributes = CONSOLE_COLORS_TO_WINDOWS(PORTCOLCON_COLOR_GRAY, PORTCOLCON_COLOR_BLACK);
-  if (handle->consolehandle) {
-    if (GetConsoleScreenBufferInfo(handle->consolehandle, &consoleinfo)) {
-      //remember current console foreground and background color
-      handle->windows_original_attributes = consoleinfo.wAttributes;
-    } else {
-      handle->consolehandle = NULL;
-    }
-  }
-  handle->windows_current_attributes = handle->windows_original_attributes;
+#ifdef _WIN32
+  handle->consolehandle = INVALID_HANDLE_VALUE;
 #endif
   handle->ansi_current_fgcolor = CONSOLE_COLORS_TO_ANSI_FOREGROUND(PORTCOLCON_COLOR_GRAY);
   handle->ansi_current_bgcolor = CONSOLE_COLORS_TO_ANSI_BACKGROUND(PORTCOLCON_COLOR_BLACK);
+  handle->nocolor_is_set = 0;
+  handle->term_is_set = 0;
+  if ((s = portcolcon_getenv("FORCE_ANSI")) != NULL) {
+    if (*s && strcmp(s, "0") != 0)
+      handle->term_is_set = 1;
+    free(s);
+  }
+  if (!handle->term_is_set) {
 #ifdef _WIN32
-  if (_isatty(_fileno(stdout))) {
+    if (_isatty(_fileno(stdout))) {
 #else
-  if (isatty(fileno(stdout))) {
+    if (isatty(fileno(stdout))) {
 #endif
-    if ((s = portcolcon_getenv("NO_COLOR")) != NULL) {
-      if (*s)
-        handle->nocolor_is_set = 1;
-      free(s);
-    } else if ((s = portcolcon_getenv("TERM")) != NULL) {
-      if (*s)
-        handle->term_is_set = 1;
-      free(s);
+#if defined(_WIN32) && !defined(NOWINDOWSCONSOLE)
+      CONSOLE_SCREEN_BUFFER_INFO consoleinfo;
+      //get console handle and current console foreground and background color
+      if ((handle->consolehandle = GetStdHandle(STD_OUTPUT_HANDLE)) != INVALID_HANDLE_VALUE) {
+
+      }
+      handle->windows_original_attributes = CONSOLE_COLORS_TO_WINDOWS(PORTCOLCON_COLOR_GRAY, PORTCOLCON_COLOR_BLACK);
+      if (handle->consolehandle != INVALID_HANDLE_VALUE) {
+        if (GetConsoleScreenBufferInfo(handle->consolehandle, &consoleinfo)) {
+          //remember current console foreground and background color
+          handle->windows_original_attributes = consoleinfo.wAttributes;
+        } else {
+          handle->consolehandle = NULL;
+        }
+      }
+      handle->windows_current_attributes = handle->windows_original_attributes;
+#endif
+      if ((s = portcolcon_getenv("NO_COLOR")) != NULL) {
+        if (*s && strcmp(s, "0") != 0)
+          handle->nocolor_is_set = 1;
+        free(s);
+      } else if ((s = portcolcon_getenv("TERM")) != NULL) {
+        if (*s)
+          handle->term_is_set = 1;
+        free(s);
+      }
     }
   }
   return handle;
@@ -110,7 +122,7 @@ DLL_EXPORT_PORTCOLCON void portcolcon_set_color (portcolconhandle handle, unsign
 {
   if (!handle->nocolor_is_set) {
 #if defined(_WIN32) && !defined(NOWINDOWSCONSOLE)
-    if (handle->consolehandle) {
+    if (handle->consolehandle != INVALID_HANDLE_VALUE) {
       handle->windows_current_attributes = CONSOLE_COLORS_TO_WINDOWS((foreground_color != PORTCOLCON_COLOR_IGNORE ? foreground_color : WINDOWS_ATTR_TO_CONSOLE_FOREGROUND(handle->windows_current_attributes)), (background_color != PORTCOLCON_COLOR_IGNORE ? background_color : WINDOWS_ATTR_TO_CONSOLE_BACKGROUND(handle->windows_current_attributes)));
       SetConsoleTextAttribute(handle->consolehandle, handle->windows_current_attributes);
     } else
@@ -129,7 +141,7 @@ DLL_EXPORT_PORTCOLCON void portcolcon_set_foreground (portcolconhandle handle, u
 {
   if (!handle->nocolor_is_set) {
 #if defined(_WIN32) && !defined(NOWINDOWSCONSOLE)
-    if (handle->consolehandle) {
+    if (handle->consolehandle != INVALID_HANDLE_VALUE) {
       handle->windows_current_attributes = CONSOLE_COLORS_TO_WINDOWS(color, WINDOWS_ATTR_TO_CONSOLE_BACKGROUND(handle->windows_current_attributes));
       SetConsoleTextAttribute(handle->consolehandle, handle->windows_current_attributes);
     } else
@@ -147,7 +159,7 @@ DLL_EXPORT_PORTCOLCON void portcolcon_set_background (portcolconhandle handle, u
 {
   if (!handle->nocolor_is_set) {
 #if defined(_WIN32) && !defined(NOWINDOWSCONSOLE)
-    if (handle->consolehandle) {
+    if (handle->consolehandle != INVALID_HANDLE_VALUE) {
       handle->windows_current_attributes = CONSOLE_COLORS_TO_WINDOWS(WINDOWS_ATTR_TO_CONSOLE_FOREGROUND(handle->windows_current_attributes), color);
       SetConsoleTextAttribute(handle->consolehandle, handle->windows_current_attributes);
     } else
@@ -165,7 +177,7 @@ DLL_EXPORT_PORTCOLCON void portcolcon_reset_color (portcolconhandle handle)
 {
   if (!handle->nocolor_is_set) {
 #if defined(_WIN32) && !defined(NOWINDOWSCONSOLE)
-    if (handle->consolehandle) {
+    if (handle->consolehandle != INVALID_HANDLE_VALUE) {
       handle->windows_current_attributes = handle->windows_original_attributes;
       SetConsoleTextAttribute(handle->consolehandle, handle->windows_current_attributes);
     } else
@@ -182,7 +194,7 @@ DLL_EXPORT_PORTCOLCON void portcolcon_write (portcolconhandle handle, const char
     return;
 /*
 #if defined(_WIN32) && !defined(NOWINDOWSCONSOLE)
-  if (handle->consolehandle) {
+  if (handle->consolehandle != INVALID_HANDLE_VALUE) {
     WriteConsoleA(handle->consolehandle, data, strlen(data), NULL, NULL);
   } else
 #endif
@@ -290,7 +302,7 @@ DLL_EXPORT_PORTCOLCON int portcolcon_printf_in_color (portcolconhandle handle, u
   va_start(args, format);
   //remember current colors and set new colors
 #if defined(_WIN32) && !defined(NOWINDOWSCONSOLE)
-  if (handle->consolehandle) {
+  if (handle->consolehandle != INVALID_HANDLE_VALUE) {
     SetConsoleTextAttribute(handle->consolehandle, CONSOLE_COLORS_TO_WINDOWS((foreground_color != PORTCOLCON_COLOR_IGNORE ? foreground_color : WINDOWS_ATTR_TO_CONSOLE_FOREGROUND(handle->windows_current_attributes)), (background_color != PORTCOLCON_COLOR_IGNORE ? background_color : WINDOWS_ATTR_TO_CONSOLE_BACKGROUND(handle->windows_current_attributes))));
   } else
 #endif
@@ -301,7 +313,7 @@ DLL_EXPORT_PORTCOLCON int portcolcon_printf_in_color (portcolconhandle handle, u
   result = vprintf(format, args);
   //restore color
 #if defined(_WIN32) && !defined(NOWINDOWSCONSOLE)
-  if (handle->consolehandle) {
+  if (handle->consolehandle != INVALID_HANDLE_VALUE) {
     SetConsoleTextAttribute(handle->consolehandle, handle->windows_current_attributes);
   } else
 #endif
@@ -316,7 +328,7 @@ DLL_EXPORT_PORTCOLCON void portcolcon_set_title (portcolconhandle handle, const 
 {
   if (!handle->nocolor_is_set) {
 #if defined(_WIN32) && !defined(NOWINDOWSCONSOLE)
-    if (handle->consolehandle) {
+    if (handle->consolehandle != INVALID_HANDLE_VALUE) {
       SetConsoleTitleA(title ? title : "");
     } else
 #endif
@@ -330,7 +342,7 @@ DLL_EXPORT_PORTCOLCON int portcolcon_get_size (portcolconhandle handle, int* wid
 {
   if (!handle->nocolor_is_set) {
 #ifdef _WIN32
-    if (handle->consolehandle) {
+    if (handle->consolehandle != INVALID_HANDLE_VALUE) {
       CONSOLE_SCREEN_BUFFER_INFO info;
       if (GetConsoleScreenBufferInfo(handle->consolehandle, &info)) {
         if (width)
@@ -358,7 +370,7 @@ DLL_EXPORT_PORTCOLCON void portcolcon_move_cursor (portcolconhandle handle, int 
 {
   if (!handle->nocolor_is_set) {
 #if defined(_WIN32) && !defined(NOWINDOWSCONSOLE)
-    if (handle->consolehandle) {
+    if (handle->consolehandle != INVALID_HANDLE_VALUE) {
       COORD pos = {x, y};
       SetConsoleCursorPosition(handle->consolehandle, pos);
     } else
@@ -373,7 +385,7 @@ DLL_EXPORT_PORTCOLCON void portcolcon_show_cursor (portcolconhandle handle, int 
 {
   if (!handle->nocolor_is_set) {
 #if defined(_WIN32) && !defined(NOWINDOWSCONSOLE)
-    if (handle->consolehandle) {
+    if (handle->consolehandle != INVALID_HANDLE_VALUE) {
       CONSOLE_CURSOR_INFO cursorinfo;
       GetConsoleCursorInfo(handle->consolehandle, &cursorinfo);
       cursorinfo.bVisible = (visible ? TRUE : FALSE);
@@ -390,7 +402,7 @@ DLL_EXPORT_PORTCOLCON void portcolcon_clear_screen (portcolconhandle handle)
 {
   if (!handle->nocolor_is_set) {
 #if defined(_WIN32) && !defined(NOWINDOWSCONSOLE)
-    if (handle->consolehandle) {
+    if (handle->consolehandle != INVALID_HANDLE_VALUE) {
       CONSOLE_SCREEN_BUFFER_INFO consoleinfo;
       if (GetConsoleScreenBufferInfo(handle->consolehandle, &consoleinfo)) {
         DWORD n;
