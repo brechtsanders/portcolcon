@@ -131,7 +131,7 @@ version:
 package: version
 	tar cfJ portcolcon-$(shell cat version).tar.xz --transform="s?^?portcolcon-$(shell cat version)/?" $(SOURCE_PACKAGE_FILES)
 
-.PHONY: package
+.PHONY: binarypackage
 binarypackage: version
 ifneq ($(OS),Windows_NT)
 	$(MAKE) PREFIX=binarypackage_temp_$(OSALIAS) install

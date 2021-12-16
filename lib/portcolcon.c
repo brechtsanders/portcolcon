@@ -63,6 +63,13 @@ DLL_EXPORT_PORTCOLCON portcolconhandle portcolcon_initialize ()
   handle->ansi_current_bgcolor = CONSOLE_COLORS_TO_ANSI_BACKGROUND(PORTCOLCON_COLOR_BLACK);
   handle->nocolor_is_set = 0;
   handle->term_is_set = 0;
+#ifdef _WIN32
+  if ((s = portcolcon_getenv("TERM_PROGRAM")) != NULL) {
+    if (strcmp(s, "mintty") == 0)
+      handle->term_is_set = 1;
+    free(s);
+  } else
+#endif
   if ((s = portcolcon_getenv("FORCE_ANSI")) != NULL) {
     if (*s && strcmp(s, "0") != 0)
       handle->term_is_set = 1;
